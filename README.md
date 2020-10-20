@@ -2,7 +2,7 @@
 
 This is unfinished (see unfinalized wiring in image). 
 
-![DIY_DOT](DIY_DOT.png)
+![DIY_DOT](DIY_DOT.PNG)
 
 DIY DOT flexible sensor design based on [this 2007 Retinotopic mapping paper](https://www.pnas.org/content/104/29/12169) for a simple 28 channel high-density tomography headset. 
 
