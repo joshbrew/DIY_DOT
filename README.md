@@ -4,9 +4,11 @@ This is unfinished (see unfinalized wiring in image). Too many projects Ahhhh!!
 
 ![DIY_DOT](DIY_DOT.PNG)
 
-DIY DOT flexible sensor design based on [this 2007 Retinotopic mapping paper](https://www.pnas.org/content/104/29/12169) for a simple and modular 28 channel high-density tomography headset. 
+DIY DOT flexible sensor design based on [this 2007 Retinotopic mapping paper](https://www.pnas.org/content/104/29/12169) for a simple and modular 28 channel high-density optical tomography headset. 
 
 This design uses 28 OPT101s and 24 pairs (48 total) 1206 sized generic LED pairs of whatever wavelength you want. The OPT101s can have the gain turned up by adding a cap and resistor between the right pins [see datasheet](https://www.ti.com/lit/ds/symlink/opt101.pdf?HQS=TI-null-null-alldatasheets-df-pf-SEP-wwe). You can get really cheap ones on Aliexpress that work consistently.
+
+Use a site like PCBway for cheap flex PCBs. There is FR4 stiffener on both sides. This is meant to be hand-assembled, careful not to burn the pads or sensitive OPT101 pins (i.e. use low temperature solder for testing). Pop the OPT101s (notch facing left from the front) in through the back to make them flush with the stiffener and solder from back.  
 
 ### What you need to make it work:
 * High channel-ct ADC, 24 bits recommended. See the [FreeEEG32](https://github.com/neuroidss/FreeEEG32-beta) for my board of choice.
