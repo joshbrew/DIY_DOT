@@ -4,7 +4,7 @@ Testing low cost 28 sensor DOT. This repo will be getting updated as I get resul
 
 ![DIYDOT](DIYDOT.PNG)
 
-DIY DOT flexible sensor design based on [this 2007 Retinotopic mapping paper](https://www.pnas.org/content/104/29/12169) for a simple and modular 28 channel high-density optical tomography headset. The question I want to answer: can I get deep image reconstruction?
+DIY DOT flexible sensor design based on [this 2007 Retinotopic mapping paper](https://www.pnas.org/content/104/29/12169) for a simple and modular 28 channel high-density optical tomography headset. The question I want to answer: can I get [deep image reconstruction](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006633)?
 
 This design uses 28 OPT101s and 24 pairs (48 total) 1206 sized generic LED pairs of whatever wavelength you want. The OPT101s can have the gain turned up by adding a cap and resistor between the right pins [see datasheet](https://www.ti.com/lit/ds/symlink/opt101.pdf?HQS=TI-null-null-alldatasheets-df-pf-SEP-wwe). You can get really cheap ones on Aliexpress that work consistently.
 
