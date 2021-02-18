@@ -2,7 +2,7 @@
 
 Testing low cost 28 sensor DOT. This repo will be getting updated as I get results and some working code to share. I will share how to drive the LEDs and how I get simultaneous sensor output as I get things demonstrable.
 
-![DIYDOT](DIYDOT.PNG)
+![DIYDOT](DIY__DOT.PNG)
 
 DIY DOT flexible sensor design based on [this 2007 Retinotopic mapping paper](https://www.pnas.org/content/104/29/12169) for a simple and modular 28 channel high-density optical tomography headset. The question I want to answer: can I get [deep image reconstruction](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006633)?
 
