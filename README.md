@@ -1,6 +1,6 @@
 # DIY Diffuse Optical Tomography (DOT) PCB plans
 
-This is unfinished (see unfinalized wiring in image). Too many projects Ahhhh!!
+Testing low cost 28 sensor DOT. This repo will be getting updated as I get results and some working code to share. I will share how to drive the LEDs and how I get simultaneous sensor output as I get things demonstrable.
 
 ![DIYDOT](DIYDOT.PNG)
 
@@ -16,7 +16,5 @@ Use a site like PCBway for cheap flex PCBs. There is FR4 stiffener on both sides
 * We recommend narrow-coned LEDs to minimize scalp interference for short separation channels.
 * [Use 1068nm IR LEDs for best penetration.](https://www.spiedigitallibrary.org/journals/journal-of-biomedical-optics/volume-25/issue-09/097003/Diffuse-correlation-spectroscopy-measurements-of-blood-flow-using-1064nm-light/10.1117/1.JBO.25.9.097003.full?fbclid=IwAR02-l_q-xCykuuqUjc_RWJfQE7ESOEIRK0G9mqZSWaGiFhfwu1QNV42vjQ&SSO=1) The other LED can be red, green, or another IR wavelength (e.g. 850nm).
 
-
-I'll update this soonish with finished plans and images of it assembled hooked up.
 
 MIT License: Do whatever you want with it, I'm gonna do what I want with it too. And cite this repo if you make it useful!
