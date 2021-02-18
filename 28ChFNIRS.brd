@@ -3238,8 +3238,8 @@
 <text x="63.6524" y="-91.567" size="0.6096" layer="27">34</text>
 <text x="61.6712" y="-91.4908" size="0.6096" layer="27">18</text>
 <text x="59.9186" y="-91.4654" size="0.6096" layer="27">2</text>
-<text x="56.4134" y="-90.3224" size="0.6096" layer="27">LEDs</text>
-<text x="56.388" y="-97.79" size="0.6096" layer="27">LEDs</text>
+<text x="56.1594" y="-92.9132" size="0.6096" layer="27">LEDs</text>
+<text x="56.1848" y="-95.0722" size="0.6096" layer="27">LEDs</text>
 <text x="105.5878" y="-78.5876" size="0.6096" layer="27" rot="R90">SENSORS</text>
 <text x="63.4746" y="-78.5368" size="0.6096" layer="27" rot="R90">SENSORS</text>
 <text x="86.1314" y="-80.3656" size="0.6096" layer="27" rot="R180">SENSORS</text>
@@ -3280,6 +3280,16 @@ and 1206 spec LEDs</text>
 <text x="66.9798" y="-71.1454" size="2.54" layer="25">The Dream Machine
 The "2Kool4Skool"
 The "End of Privacy"</text>
+<hole x="15.8496" y="34.8742" drill="2.54"/>
+<hole x="152.2222" y="35.1536" drill="2.54"/>
+<hole x="111.3028" y="-97.7392" drill="2.54"/>
+<hole x="57.4802" y="-97.7646" drill="2.54"/>
+<hole x="20.193" y="39.243" drill="2.54"/>
+<hole x="148.1328" y="39.3954" drill="2.54"/>
+<circle x="57.4802" y="-97.7646" radius="1.37535625" width="0.2032" layer="101"/>
+<circle x="57.4802" y="-97.79" radius="1.380271875" width="0.2032" layer="100"/>
+<circle x="111.3028" y="-97.7392" radius="1.380271875" width="0.2032" layer="100"/>
+<circle x="111.3028" y="-97.7392" radius="1.37535625" width="0.2032" layer="101"/>
 </plain>
 <libraries>
 <library name="epic">
@@ -3889,7 +3899,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="54.421" y="27.2178" size="0.4" layer="26" font="vector" ratio="12" rot="MR90"/>
 </element>
 <element name="D5" library="epic" package="LED-1206" value="" x="56.1086" y="17.0688" smashed="yes">
-<attribute name="NAME" x="48.9966" y="16.1798" size="1.778" layer="25" font="vector"/>
+<attribute name="NAME" x="48.9966" y="16.3322" size="1.778" layer="25" font="vector"/>
 <attribute name="VALUE" x="53.5686" y="13.7668" size="1.778" layer="27" font="vector"/>
 </element>
 <element name="D6" library="epic" package="LED-1206" value="" x="56.1086" y="14.8082" smashed="yes">
@@ -5139,7 +5149,7 @@ design rules under a new name.</description>
 <wire x1="149.7852" y1="-31.496" x2="149.7598" y2="-31.5214" width="0.508" layer="1"/>
 <wire x1="149.7598" y1="-31.5214" x2="149.7598" y2="-33.7312" width="0.508" layer="1"/>
 <wire x1="149.7598" y1="-33.7312" x2="149.7598" y2="-34.8756" width="0.508" layer="1"/>
-<wire x1="149.7598" y1="-34.8756" x2="150.622" y2="-35.7378" width="0.508" layer="1"/>
+<wire x1="149.7598" y1="-34.8756" x2="150.2156" y2="-35.3314" width="0.508" layer="1"/>
 <wire x1="20.9818" y1="-51.7666" x2="52.2224" y2="-83.0072" width="0.508" layer="1"/>
 <via x="40.132" y="-58.1914" extent="1-16" drill="0.35"/>
 <wire x1="40.132" y1="-58.1914" x2="40.132" y2="-65.9892" width="0.508" layer="16"/>
@@ -5177,9 +5187,9 @@ design rules under a new name.</description>
 <wire x1="131.7498" y1="-62.357" x2="119.1006" y2="-75.0062" width="0.508" layer="1"/>
 <via x="119.1006" y="-75.0062" extent="1-16" drill="0.35"/>
 <wire x1="131.7498" y1="-35.3568" x2="131.7498" y2="-62.357" width="0.508" layer="1"/>
-<wire x1="150.622" y1="-57.45766875" x2="113.35366875" y2="-94.726" width="0.508" layer="1"/>
-<wire x1="109.7788" y1="-94.726" x2="113.35366875" y2="-94.726" width="0.508" layer="1"/>
-<wire x1="150.622" y1="-35.7378" x2="150.622" y2="-57.45766875" width="0.508" layer="1"/>
+<wire x1="150.2156" y1="-57.05126875" x2="112.54086875" y2="-94.726" width="0.508" layer="1"/>
+<wire x1="109.7788" y1="-94.726" x2="112.54086875" y2="-94.726" width="0.508" layer="1"/>
+<wire x1="150.2156" y1="-35.3314" x2="150.2156" y2="-57.05126875" width="0.508" layer="1"/>
 <wire x1="108.077" y1="-74.9046" x2="108.1024" y2="-74.93" width="0.508" layer="16"/>
 <wire x1="108.1024" y1="-74.93" x2="108.1024" y2="-85.8774" width="0.508" layer="16"/>
 <wire x1="108.1024" y1="-91.4146" x2="108.1024" y2="-86.0044" width="0.508" layer="16"/>
