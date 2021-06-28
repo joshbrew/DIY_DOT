@@ -1,0 +1,7 @@
+Partlist exported from C:/Users/brews/Documents/GitHub/DIY_DOT/16ChFNIRS.sch at 6/28/2021 4:56 PM
+
+Qty Value          Device         Package     Parts                                                                                                                                                                                 Description   MF MPN OC_FARNELL OC_NEWARK POPULARITY
+2                  FE10-2         FE10-2      SV31, SV32                                                                                                                                                                            FEMALE HEADER        unknown    unknown   0         
+18                 LED1206        LED-1206    D1, D2, D3, D4, D5, D6, D7, D8, D9, D10, D11, D12, D13, D14, D15, D16, D17, D18                                                                                                       LEDs                                                
+32                 MA04-1         MA04-1      SV1, SV2, SV3, SV4, SV5, SV6, SV7, SV8, SV9, SV10, SV11, SV12, SV13, SV14, SV15, SV16, SV17, SV18, SV19, SV20, SV21, SV22, SV23, SV24, SV25, SV26, SV27, SV28, SV29, SV30, SV43, SV44 PIN HEADER           unknown    unknown   41        
+16  SOLDERJUMPERNC SOLDERJUMPERNC SJ_2S_SMALL SJ1, SJ2, SJ3, SJ4, SJ5, SJ6, SJ7, SJ8, SJ9, SJ10, SJ11, SJ12, SJ13, SJ14, SJ15, SJ22                                                                                                 Solder Jumper                                       

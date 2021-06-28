@@ -1,0 +1,42 @@
+Screaming Circuits SMD component position file.
+Created by Centroid_ScreamingCircuits_smd.ulp 1.2.0.
+
+Centroid Data for pc board: "16ChFNIRS.brd" as of: 6/28/2021 4:57 PM
+Measurements are in inches. Comma delimited
+Only surface mount components included
+
+RefDes,Layer,LocationX,LocationY,Rotation
+D1,Top,0.766,0.671,0
+D2,Top,0.767,0.584,0
+D3,Top,1.487,0.670,0
+D4,Top,1.487,0.583,0
+D5,Top,2.209,0.672,0
+D6,Top,2.209,0.583,0
+D7,Top,2.938,0.671,0
+D8,Top,2.938,0.584,0
+D9,Top,3.657,0.670,0
+D10,Top,3.657,0.584,0
+D11,Top,4.387,0.671,0
+D12,Top,4.387,0.584,0
+D13,Top,5.108,0.670,0
+D14,Top,5.108,0.583,0
+D15,Top,5.839,0.670,0
+D16,Top,5.839,0.582,0
+D17,Top,6.566,0.669,0
+D18,Top,6.566,0.582,0
+SJ1,Bottom,1.375,1.096,90
+SJ2,Bottom,2.115,1.107,90
+SJ3,Bottom,2.825,1.089,90
+SJ4,Bottom,3.563,1.102,90
+SJ5,Bottom,4.270,1.091,90
+SJ6,Bottom,5.011,1.098,90
+SJ7,Bottom,5.716,1.097,90
+SJ8,Bottom,1.368,0.171,90
+SJ9,Bottom,2.107,0.143,90
+SJ10,Bottom,2.818,0.150,90
+SJ11,Bottom,3.555,0.149,90
+SJ12,Bottom,4.261,0.154,90
+SJ13,Bottom,5.005,0.155,90
+SJ14,Bottom,5.708,0.150,90
+SJ15,Bottom,6.464,0.136,90
+SJ22,Bottom,6.463,1.104,90
