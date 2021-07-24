@@ -14,7 +14,7 @@ Use a site like PCBway for cheap flex PCBs. There is FR4 stiffener on both sides
 
 ![DIY16DOT](16Ch.PNG)
 
-# LED Driver example
+# LED Driver example w/ TLC5955DCAR
 
 ![leddriver](LED_driver.PNG)
 
