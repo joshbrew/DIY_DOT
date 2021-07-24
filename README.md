@@ -16,7 +16,7 @@ Use a site like PCBway for cheap flex PCBs. There is FR4 stiffener on both sides
 
 # LED Driver example w/ TLC5955DCA
 
-![leddriver](LED_driver.PNG)
+![leddriver](LEDdriver.PNG)
 
 ### What you need to make it work:
 * High channel-ct ADC, 24 bits recommended. See the [FreeEEG32](https://github.com/neuroidss/FreeEEG32-beta) for my board of choice. New original board design incoming in another repo :-)
