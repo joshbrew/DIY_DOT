@@ -25,5 +25,11 @@ Use a site like PCBway for cheap flex PCBs. There is FR4 stiffener on both sides
 * Add light pipes over PD and LED areas to get better contact.
 * [Use >1000nm IR LEDs for best penetration. (no idea if they exist at this size)](https://www.spiedigitallibrary.org/journals/journal-of-biomedical-optics/volume-25/issue-09/097003/Diffuse-correlation-spectroscopy-measurements-of-blood-flow-using-1064nm-light/10.1117/1.JBO.25.9.097003.full?fbclid=IwAR02-l_q-xCykuuqUjc_RWJfQE7ESOEIRK0G9mqZSWaGiFhfwu1QNV42vjQ&SSO=1) The other LED can be red, green, or another IR wavelength (e.g. 850nm).
 
+## What can I do with this?
 
-MIT License: Do whatever you want with it, I'm gonna do what I want with it too. And cite this repo if you make it useful!
+Read about fMRI, then assume this is an fMRI but it's dirt cheap in comparison. However, it only gets you the few outer centimeters of depth resolution, which can be enhanced with higher power lighting, guassian windows, interferometry (the most interesting next logical step for this ala OCT), and some other classic filtering tricks from RF and astronomy. So we can do legit mind reading, source localization for EEG, brain topology studies, and potentially real time monitoring of problems like subdural hematoma or possible metabolic issues in the high energy-demanding neocortex. Multimodal imaging promises to solve a lot of modeling problems with this technology, and there's probably a lot more to learn just in terms of how different physiology contains relevant computational information and what the interplay is. That's my very unqualified 2 cents :P
+
+
+## License 
+MIT License: Do whatever you want with it, I'm gonna do what I want with it too. And cite this repo if you make it useful! 
+Get in touch @ brewster.joshua1@gmail.com, I'm working on a scalable version of this stuff but it just takes forever between factory times and me not knowing what the hell I'm doing. 
