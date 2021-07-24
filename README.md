@@ -19,7 +19,7 @@ Use a site like PCBway for cheap flex PCBs. There is FR4 stiffener on both sides
 ![leddriver](LED_driver.PNG)
 
 ### What you need to make it work:
-* High channel-ct ADC, 24 bits recommended. See the [FreeEEG32](https://github.com/neuroidss/FreeEEG32-beta) for my board of choice.
+* High channel-ct ADC, 24 bits recommended. See the [FreeEEG32](https://github.com/neuroidss/FreeEEG32-beta) for my board of choice. New original board design incoming in another repo :-)
 * 48 GPIO or some kind of relay to drive the LEDs which need to be flashed independently. Can be done by stringing multiple cheap boards together via RX/TX pins (will publish examples eventually). 
 * We recommend narrow-coned LEDs to minimize scalp interference for short separation channels.
 * Add light pipes over PD and LED areas to get better contact.
