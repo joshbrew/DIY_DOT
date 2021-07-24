@@ -10,10 +10,19 @@ This design uses 28 OPT101s and 24 pairs (48 total) 1206 sized generic LED pairs
 
 Use a site like PCBway for cheap flex PCBs. There is FR4 stiffener on both sides. This is meant to be hand-assembled, careful not to burn the pads or sensitive OPT101 pins (i.e. use low temperature solder for testing). Pop the OPT101s (notch facing left from the front) in through the back to make them flush with the stiffener and solder from back.  
 
+# 16 channel (forehea-friendly)
+
+![DIY16DOT](16Ch.PNG)
+
+# LED Driver example
+
+![leddriver](LED_driver.PNG)
+
 ### What you need to make it work:
 * High channel-ct ADC, 24 bits recommended. See the [FreeEEG32](https://github.com/neuroidss/FreeEEG32-beta) for my board of choice.
 * 48 GPIO or some kind of relay to drive the LEDs which need to be flashed independently. Can be done by stringing multiple cheap boards together via RX/TX pins (will publish examples eventually). 
 * We recommend narrow-coned LEDs to minimize scalp interference for short separation channels.
+* Add light pipes over PD and LED areas to get better contact.
 * [Use >1000nm IR LEDs for best penetration. (no idea if they exist at this size)](https://www.spiedigitallibrary.org/journals/journal-of-biomedical-optics/volume-25/issue-09/097003/Diffuse-correlation-spectroscopy-measurements-of-blood-flow-using-1064nm-light/10.1117/1.JBO.25.9.097003.full?fbclid=IwAR02-l_q-xCykuuqUjc_RWJfQE7ESOEIRK0G9mqZSWaGiFhfwu1QNV42vjQ&SSO=1) The other LED can be red, green, or another IR wavelength (e.g. 850nm).
 
 

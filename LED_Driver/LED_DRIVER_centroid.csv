@@ -1,0 +1,10 @@
+Screaming Circuits SMD component position file.
+Created by Centroid_ScreamingCircuits_smd.ulp 1.2.0.
+
+Centroid Data for pc board: "LED_DRIVER.brd" as of: 7/23/2021 8:02 PM
+Measurements are in inches. Comma delimited
+Only surface mount components included
+
+RefDes,Layer,LocationX,LocationY,Rotation
+C1,Top,0.635,0.227,0
+U1,Top,0.353,0.450,270
