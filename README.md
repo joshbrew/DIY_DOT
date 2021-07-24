@@ -10,7 +10,7 @@ This design uses 28 OPT101s and 24 pairs (48 total) 1206 sized generic LED pairs
 
 Use a site like PCBway for cheap flex PCBs. There is FR4 stiffener on both sides. This is meant to be hand-assembled, careful not to burn the pads or sensitive OPT101 pins (i.e. use low temperature solder for testing). Pop the OPT101s (notch facing left from the front) in through the back to make them flush with the stiffener and solder from back.  
 
-# 16 channel (forehea-friendly)
+# 16 channel (forehead-friendly)
 
 ![DIY16DOT](16Ch.PNG)
 
