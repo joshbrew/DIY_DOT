@@ -1,0 +1,24 @@
+{
+    "Header": {
+        "Comment": "All values are metric (mm)",
+        "CreationDate": "2023-03-28T17:34:03Z",
+        "GenerationSoftware": {
+            "Application": "EAGLE",
+            "Vendor": "Autodesk",
+            "Version": "9.6.2"
+        },
+        "Part": "Single"
+    },
+    "Overall": {
+        "BoardThickness": 1.57,
+        "LayerNumber": 2,
+        "Name": {
+            "ProjectId": "16ChFNIRS"
+        },
+        "Owner": "Garrett Flynn <gflynn@usc.edu>",
+        "Size": {
+            "X": 198.4248,
+            "Y": 43.0276
+        }
+    }
+}
