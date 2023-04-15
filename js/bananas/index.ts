@@ -190,7 +190,10 @@ sources.sensors = {intensity:1, path: sensorPoints};
 
 
 const canvas = document.createElement("canvas"); // Get the canvas element
-document.body.appendChild(canvas);
+
+let node = document.createElement('div');
+node.innerHTML = "PAGE LOADING. GENERATING VOXELS & OVERLAPS.";
+document.body.appendChild(node);
 
 const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
@@ -349,7 +352,36 @@ const createScene = () => {
     return scene;
 };
 
-const scene = createScene();
+setTimeout(() => {
+
+    const scene = createScene();
+
+    node.remove();
+    
+    document.body.appendChild(canvas);
+    engine.resize();
+
+    
+    let simLoop = () => {
+
+        let readings = simulateReadings();
+        mapReadingsToVoxels(readings);
+
+        console.log('updated readings')
+        setTimeout(simLoop, 100);
+    }
+
+    simLoop();
+
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
+    // Watch for browser/canvas resize events
+    window.addEventListener("resize", function () {
+        engine.resize();
+    });
+
+}, 100);
 
 let newReadings = false;
 
@@ -435,25 +467,6 @@ function simulateReadings() {
     return readings;
 }
 
-
-let simLoop = () => {
-
-    let readings = simulateReadings();
-    mapReadingsToVoxels(readings);
-
-    console.log('updated readings')
-    setTimeout(simLoop, 100);
-}
-
-simLoop();
-
-engine.runRenderLoop(function () {
-    scene.render();
-});
-// Watch for browser/canvas resize events
-window.addEventListener("resize", function () {
-    engine.resize();
-});
 
 
 
