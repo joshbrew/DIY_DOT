@@ -1,5 +1,5 @@
 import * as BABYLON from 'babylonjs'
-import { create2DSineWaveOnSphere, mapPointToSphere, sphericalToCartesian } from './src/sineWaves';
+import { create2DSineWaveOnSphere,  mapPointToSphere, sphericalToCartesian } from './src/sineWaves';
 
 
 BABYLON.Mesh.prototype.pointIsInside = function (point) {    
@@ -158,6 +158,7 @@ for (const i of sensorLayout.leds) {
         const end = mapPointToSphere(vecj, sphereCenter, radius);
         sensorPoints.push(vecj);
         const amp = end.subtract(start).length()/4;
+        //const magLine = createDipoleFieldLine(start, end, sphereCenter, amp, numPoints);
         const sineWave = create2DSineWaveOnSphere(
             start, 
             end, 
@@ -263,7 +264,7 @@ const createScene = () => {
                             mesh:voxel,
                             red:1,
                             ir:1,
-                            intensity:1
+                            intensity:0
                         };
 
                         sourceKeys.forEach((source) => {
@@ -289,7 +290,7 @@ const createScene = () => {
                         });
 
                         if(voxels[voxelId].sources) {
-                            let rgb = blueToRedGradient(voxels[voxelId].intensity*25);
+                            let rgb = blueToRedGradient(voxels[voxelId].intensity * numPoints); 
                             let vmat = new BABYLON.StandardMaterial('matdebug', scene);
                             vmat.diffuseColor = new BABYLON.Color3(rgb.r, rgb.g, rgb.b);
                             vmat.alpha = 0.3;

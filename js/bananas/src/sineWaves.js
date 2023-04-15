@@ -28,23 +28,31 @@ export function create3DSineWave(p1, p2, radius, numPoints) {
 
     return points;
 }
+//BABYLON.Vector3.Dot(normal,startToCenter)
+
 
 export function create2DSineWaveOnSphere(start, end, sphereCenter, amplitude, frequency, numPoints) {
     const points = [];
     const dir = end.subtract(start);
     const length = dir.length();
     const normalizedDir = dir.normalize();
-    const startToEnd = end.subtract(start).normalize();
-    const startToCenter = sphereCenter.subtract(start).normalize();
-    const normal = startToEnd.cross(startToCenter).normalize();
+    //const startToEnd = end.subtract(start).normalize();
+    //const startToCenter = sphereCenter.subtract(start).normalize();
+    //const normal = startToEnd.cross(startToCenter).normalize();
   
-    for (let i = 0; i <= numPoints; i++) {
-      const t = i / numPoints;
+    for (let i = 0; i < numPoints; i++) {
+      const t = i / (numPoints-1);
       const alongPath = start.add(normalizedDir.scale(length * t));
       const towardsCenter = alongPath.subtract(sphereCenter).normalize();
-      const displacement = amplitude * Math.sin(2 * Math.PI * frequency * t);
+      
+      //const percentFromMidpoint = Math.abs(1+i - numPoints/2)/(numPoints/2);
+      
+      let displacement = amplitude * Math.sin(2 * Math.PI * frequency * t);  //amplitude * (1 - Math.pow(2 * t - 1, 2));// 
+      // Adjust displacement for the beginning and end of the sine wave
+      //const adjustedDisplacement = displacement * Math.sin(Math.PI * t);
+      //const displacementFactor = (1 - Math.cos(Math.PI * t)) / 2;
       const point = alongPath.subtract(towardsCenter.scale(displacement));
-  
+      
       points.push(point);
     }
   
