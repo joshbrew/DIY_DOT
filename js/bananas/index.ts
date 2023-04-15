@@ -1,5 +1,5 @@
 import * as BABYLON from 'babylonjs'
-import { create2DSineWaveOnSphere,  mapPointToSphere, sphericalToCartesian } from './src/sineWaves';
+import { create2DSineWaveOnSphere,  distanceBetweenPoints,  mapPointToSphere, sphericalToCartesian } from './src/sineWaves';
 
 
 BABYLON.Mesh.prototype.pointIsInside = function (point) {    
@@ -50,7 +50,7 @@ BABYLON.Mesh.prototype.pointIsInside = function (point) {
 
 
 const radius = 90; //mm, from average human head diameter of 18cm 
-const voxelsize = radius/10;
+const voxelsize = radius/15;
 
 // Map the points to the surface of a sphere
 const sphereCenter = new BABYLON.Vector3(0, 0, 0);
@@ -148,10 +148,17 @@ const sensorPoints = [] as any[];
 const ledPoints = [] as any[];
 
 let x = 0;
+
+let sourceDistances = {};
+
+let maxDistance = 0;
+
 for (const i of sensorLayout.leds) {
     let veci = new BABYLON.Vector3(i.x - 18.5*8/2, i.y, i.z+95);
     const start = mapPointToSphere(veci, sphereCenter, radius);
     ledPoints.push(veci);
+    sourceDistances[x] = {};
+    
     let y = 0;
     for(const j of sensorLayout.sensors) {
         let vecj = new BABYLON.Vector3(j.x - 18.5*8/2, j.y, j.z+95);
@@ -167,9 +174,13 @@ for (const i of sensorLayout.leds) {
             frequency, 
             numPoints
         );
-        y++;
+        
+        sourceDistances[x][y] = distanceBetweenPoints(start,end);
+        if(maxDistance < sourceDistances[x][y]) maxDistance = sourceDistances[x][y];
 
-        sources[`${x},${y}`] = {intensity:1, path: sineWave, isInfrared: x%2===0}; //even indices are infrared
+        sources[`${x},${y}`] = {intensity:1, path: sineWave, isInfrared: x%2===0, source:start, sink:end, distance: sourceDistances[x][y]}; //even indices are infrared
+    
+        y++;
     }
     x++;
 }
@@ -342,57 +353,101 @@ const scene = createScene();
 
 let newReadings = false;
 
-function mapReadingsToVoxels(readings={
+
+function mapReadingsToVoxels(readings:{[key:string]:{[key:string]:number|number[]}}={
     //readings will come in as ADS131 readings + which LED was on, then we'll sort into sensor readings per LED
-    leds:{
-        0:{
-            0:[5678,9012],
-            1:[1234,5678]
-        },
-        1:{
-            0:[1234,5678],
-            1:[5678,9012]
-        }
+    0:{
+        0:[5678,9012],
+        1:[1234,5678]
+    },
+    1:{
+        0:[1234,5678],
+        1:[5678,9012]
     }
 }) {
+    newReadings = false;
     //the leds come in pairs so we need to combine every pair of readings for HBO2 etc with the red and infrared
     //even is IR, odd is red
-    for(const x in readings.leds) {
-        for(const y in readings.leds[x]) {
+    for(const x in readings) {
+        for(const y in readings[x]) {
             let tag = `${x},${y}`;
-            if(Array.isArray(readings.leds[x][y])) {
+            if(Array.isArray(readings[x][y])) {
                 sources[tag].intensity = 0;
-                readings.leds[x][y].forEach((r) => {
+                (readings[x][y] as number[]).forEach((r) => {
                     sources[tag].intensity += r;
                 });
-                sources[tag].intensity /= readings.leds[x][y].length;
+                sources[tag].intensity /= (readings[x][y] as number[]).length;
             } else {
-                sources[tag].intensity = readings.leds[x][y];
+                sources[tag].intensity = readings[x][y];
             }
         }
     }
 
+    let infrared = [] as any[];
     for(const key in voxels) {
         const voxel = voxels[key];
         voxel.red = 0;
         voxel.infrared = 0;
         for(const k in voxel.sources) {
             if(sources[k].isInfrared) {
-                voxel.infrared += sources[k].intensity;
-            } else voxel.red += sources[k].intensity;
+                voxel.infrared += sources[k].intensity*voxel.sources[k].proportion;
+            } else voxel.red += sources[k].intensity*voxel.sources[k].proportion;
         }
         
-        voxel.intensity = 1 + voxel.red/voxel.infrared;//lets display the intensity as the proportion of red to infrared + 1
+        voxel.intensity = voxel.red/voxel.infrared;//lets display the intensity as the proportion of red to infrared + 1
+        infrared.push(voxel.infrared);
+    }
 
-        let rgb = blueToRedGradient(voxel.sources.intensity*25);
-        voxel.material.diffuseColor = new BABYLON.Color3(rgb.r, rgb.g, rgb.b);
+    let magnitude = (arr) => {
+        let sum = arr.reduce((ac, pr) => { return ac + pr*pr; });
+        return Math.sqrt(sum/arr.length);
+    }
+
+    let normalize = (arr) => {
+
+        let mag = magnitude(arr);
+        return arr.map(v => v/mag);
+
+    }
+
+    
+    let mag = magnitude(infrared);
+
+    for(const key in voxels) {
+        const voxel = voxels[key];
+        let rgb = blueToRedGradient(voxel.infrared/mag);
+        voxel.mesh.material.diffuseColor = new BABYLON.Color3(rgb.r, rgb.g, rgb.b);
     }
 }
 
-engine.runRenderLoop(function () {
-    if(newReadings) {
-        //mapReadingsToVoxels();
+function simulateReadings() {
+    let readings = {};
+    for(let i = 0; i < nLEDs; i++) {
+        readings[i] = {};
+        let rand = Math.random();
+        for(let j = 0; j < nSensors; j++) {
+            let modmod = 1-Math.random()*0.5;
+            let modifier = modmod*rand*(1000 / (sourceDistances[i][j]*sourceDistances[i][j])); //modify the readings relative to source/sink distance to simulate light diffusion
+            readings[i][j] = 1000000*modifier;
+        }
     }
+    newReadings = true;
+    return readings;
+}
+
+
+let simLoop = () => {
+
+    let readings = simulateReadings();
+    mapReadingsToVoxels(readings);
+
+    console.log('updated readings')
+    setTimeout(simLoop, 100);
+}
+
+simLoop();
+
+engine.runRenderLoop(function () {
     scene.render();
 });
 // Watch for browser/canvas resize events
@@ -426,7 +481,9 @@ function hslToRgb(h, s, l) {
   }
   
   function blueToRedGradient(value) {
-    const h = (1 - value) * (240 / 360); // hue value for blue-to-red gradient
+    if(value > 1) value = 1;
+    else if (value < 0) value = 0;
+    const h = (1  - value) * (240 / 360); // hue value for blue-to-red gradient
     const s = 1;
     const l = 0.5;
     const [r, g, b] = hslToRgb(h, s, l);
