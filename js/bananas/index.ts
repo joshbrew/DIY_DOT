@@ -6,7 +6,7 @@ BABYLON.Mesh.prototype.pointIsInside = function (point) {
 	var boundInfo = this.getBoundingInfo();
 	var max = boundInfo.maximum;
 	var min = boundInfo.minimum;
-	var diameter = 2 * boundInfo.boundingSphere.radius;
+	//var diameter = 2 * boundInfo.boundingSphere.radius;
 
 	if(point.x < min.x+this.position.x || point.x > max.x+this.position.x) {
 		return false;
@@ -270,28 +270,34 @@ const createScene = () => {
 
                         let voxelId = `${x},${y},${z}`;
 
-                        const voxel = BABYLON.MeshBuilder.CreateBox(voxelId, { size: voxelSize });
-                        voxel.position = position;
-                        
                         voxels[voxelId] = {
                             position:position,
-                            mesh:voxel,
                             red:1,
                             ir:1,
                             intensity:0
-                        };
+                        } as any;
 
                         sourceKeys.forEach((source) => {
 
                             let foundIdcs = [] as any;
 
-                            searching[source] = searching[source].filter((v,i) => {
-                                if(voxel.pointIsInside(v)) {
-                                    if(!voxels[voxelId].sources) {
-                                        voxels[voxelId].sources = {};
-                                    }
-                                    foundIdcs.push(i);
-                                } else return true;
+                            searching[source] = searching[source].filter((point,i) => {
+                                
+                                if(point.x < position.x - halfSize || point.x > position.x + halfSize) {
+                                    return true;
+                                }
+                                else if(point.y < position.y - halfSize || point.y > position.y + halfSize) {
+                                    return true;
+                                }
+                                else if(point.z < position.z - halfSize || point.z > position.z + halfSize) {
+                                    return true;
+                                }
+                                
+                                if(!voxels[voxelId].sources) {
+                                    voxels[voxelId].sources = {};
+                                }
+                                foundIdcs.push(i);
+                                
                             });
 
 
@@ -304,13 +310,16 @@ const createScene = () => {
                         });
 
                         if(voxels[voxelId].sources) {
+                            const voxel = BABYLON.MeshBuilder.CreateBox(voxelId, { size: voxelSize }, scene);
+                            voxel.position = position;
+                            voxels[voxelId].mesh = voxel;
+
                             let rgb = blueToRedGradient(voxels[voxelId].intensity * numPoints); 
                             let vmat = new BABYLON.StandardMaterial('matdebug', scene);
                             vmat.diffuseColor = new BABYLON.Color3(rgb.r, rgb.g, rgb.b);
                             vmat.alpha = 0.3;
-                            voxel.material = vmat;
+                            voxels[voxelId].mesh.material = vmat;
                         } else {
-                            voxel.isVisible = false;
                             delete voxels[voxelId];
                         }
 
