@@ -1,7 +1,7 @@
 import * as BABYLON from 'babylonjs'
 import './src/pointIsInside.js'
 
-import { create2DSineWaveOnSphere,  distanceBetweenPoints,  mapPointToSphere, sphericalToCartesian } from './src/sineWaves';
+import { create2DSineWaveOnSphere,  create2DSineWaveOnSphereWithRadialRing,  distanceBetweenPoints,  mapPointToSphere, sphericalToCartesian } from './src/sineWaves';
 import { nLEDs, nSensors, sensorLayout } from './src/sensorLayout';
 import { blueToRedGradient } from './src/util.js';
 
@@ -20,8 +20,11 @@ const sphereCenter = new BABYLON.Vector3(0, 0, 0);
 
 
 
-const numPointsPerLine = 100;
+const numPointsPerLine = 50;
 const frequency = 1/2;
+
+const numRingPoints = 8;
+const angleOffset = Math.PI/12;
 
  //test line
  ///////////
@@ -32,15 +35,18 @@ e3 = new BABYLON.Vector3(e3.x, e3.y, e3.z);
 
 const amplitude3 = e3.subtract(s3).length()/4;
 
-const sineWavePoints3 = create2DSineWaveOnSphere(
+const sineWavePoints3 = create2DSineWaveOnSphereWithRadialRing(
     s3, 
     e3, 
     sphereCenter, 
     amplitude3, 
     frequency, 
-    numPointsPerLine
+    numPointsPerLine, 
+    numRingPoints,
+    angleOffset
 );
 ///////////////
+
 
 /** Sensors (x) and LEDS (o)
  *     x      x      
@@ -83,13 +89,15 @@ for (const i of sensorLayout.leds) {
         sensorPoints.push(vecj);
         const amp = end.subtract(start).length()/4;
         //const magLine = createDipoleFieldLine(start, end, sphereCenter, amp, numPoints);
-        const sineWave = create2DSineWaveOnSphere(
+        const sineWave = create2DSineWaveOnSphereWithRadialRing(//create2DSineWaveOnSphere(
             start, 
             end, 
             sphereCenter, 
             amp, 
             frequency, 
-            numPointsPerLine
+            numPointsPerLine,
+            numRingPoints,
+            angleOffset
         );
         
         sourceDistances[x][y] = distanceBetweenPoints(start,end);
@@ -183,9 +191,14 @@ const createScene = () => {
             searching[source] = [...sources[source].path];
         });
         
-        for (let x = -numVoxelsPerAxis / 2; x < numVoxelsPerAxis / 2; x++) {
-            for (let y = -numVoxelsPerAxis / 2; y < numVoxelsPerAxis / 2; y++) {
-                for (let z = -numVoxelsPerAxis / 2; z < numVoxelsPerAxis / 2; z++) {
+        let nnVPA = -numVoxelsPerAxis / 2;
+        let nVPA = numVoxelsPerAxis / 2;
+
+        let totalPointsPerLine = numPointsPerLine+Math.floor(numPointsPerLine)*numRingPoints;
+
+        for (let x = nnVPA; x < nVPA; x++) {
+            for (let y = nnVPA; y < nVPA; y++) {
+                for (let z = nnVPA; z < nVPA; z++) {
                     
                     const position = new BABYLON.Vector3(x * voxelSize + halfSize, y * voxelSize + halfSize, z * voxelSize + halfSize);
                     const distance = BABYLON.Vector3.Distance(position, center);
@@ -226,9 +239,9 @@ const createScene = () => {
 
 
                             if(voxels[voxelId].sources && foundIdcs.length > 0) {
-                                const proportion = foundIdcs.length / numPointsPerLine;
+                                const proportion = foundIdcs.length / totalPointsPerLine;
                                 //reverse bias the proportion toward the center of the wave (about 90% should come from the primary depth achieved by each source/sink pair (??))
-                                const percentTowardMidpoint = 1-Math.abs(1+Math.max(...foundIdcs) - numPointsPerLine/2)/(numPointsPerLine/2);
+                                const percentTowardMidpoint = 1-Math.abs(1+Math.max(...foundIdcs) - totalPointsPerLine/2)/(totalPointsPerLine/2);
 
                                 function springFactor(x) {
                                     // Use a power function to modify the line
@@ -249,7 +262,7 @@ const createScene = () => {
                             voxel.position = position;
                             voxels[voxelId].mesh = voxel;
 
-                            let rgb = blueToRedGradient(voxels[voxelId].intensity * numPointsPerLine); 
+                            let rgb = blueToRedGradient(voxels[voxelId].intensity * totalPointsPerLine); 
                             let vmat = new BABYLON.StandardMaterial('matdebug', scene);
                             vmat.diffuseColor = new BABYLON.Color3(rgb.r, rgb.g, rgb.b);
                             vmat.alpha = 0.3;

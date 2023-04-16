@@ -36,21 +36,11 @@ export function create2DSineWaveOnSphere(start, end, sphereCenter, amplitude, fr
     const dir = end.subtract(start);
     const length = dir.length();
     const normalizedDir = dir.normalize();
-    //const startToEnd = end.subtract(start).normalize();
-    //const startToCenter = sphereCenter.subtract(start).normalize();
-    //const normal = startToEnd.cross(startToCenter).normalize();
-  
     for (let i = 0; i < numPoints; i++) {
       const t = i / (numPoints-1);
       const alongPath = start.add(normalizedDir.scale(length * t));
       const towardsCenter = alongPath.subtract(sphereCenter).normalize();
-      
-      //const percentFromMidpoint = Math.abs(1+i - numPoints/2)/(numPoints/2);
-      
-      let displacement = amplitude * Math.sin(2 * Math.PI * frequency * t);  //amplitude * (1 - Math.pow(2 * t - 1, 2));// 
-      // Adjust displacement for the beginning and end of the sine wave
-      //const adjustedDisplacement = displacement * Math.sin(Math.PI * t);
-      //const displacementFactor = (1 - Math.cos(Math.PI * t)) / 2;
+      let displacement = amplitude * Math.sin(2 * Math.PI * frequency * t); 
       const point = alongPath.subtract(towardsCenter.scale(displacement));
       
       points.push(point);
@@ -150,3 +140,69 @@ export function createGridPoints(gridSize, gridSpacing) {
     return points;
 }
   
+
+
+
+export function create2DSineWaveOnSphereWithRadialRing(
+  start, end, sphereCenter, amplitude, frequency, numPoints, numRingPoints, angleOffset
+) {
+  const points = [];
+  const radialPoints = [];
+  const dir = end.subtract(start);
+  const length = dir.length();
+  const normalizedDir = dir.normalize();
+  for (let i = 0; i < numPoints; i++) {
+    const t = i / (numPoints - 1);
+    const alongPath = start.add(normalizedDir.scale(length * t));
+    const towardsCenter = alongPath.subtract(sphereCenter).normalize();
+    let displacement = amplitude * Math.sin(2 * Math.PI * frequency * t);
+    const point = alongPath.subtract(towardsCenter.scale(displacement));
+
+    let direction;
+    if(i === 0) {
+        const t = 1 / (numPoints - 1);
+        const alongPath2 = start.add(normalizedDir.scale(length * t));
+        const towardsCenter2 = alongPath2.subtract(sphereCenter).normalize();
+        let displacement2 = amplitude * Math.sin(2 * Math.PI * frequency * t);
+        const point2 = alongPath2.subtract(towardsCenter2.scale(displacement2));
+        direction = point2.subtract(point);
+    } else direction = point.subtract(points[i-1]);
+
+    // Create radial ring around each point
+    if(i%3 === 0) {
+      const radialRing = createRadialRing(point, sphereCenter, displacement*angleOffset, numRingPoints, direction);
+      radialPoints.push(...radialRing);
+    }
+    points.push(point);
+  }
+
+  points.push(...radialPoints);
+  return points;
+}
+
+function createRadialRing(center = new BABYLON.Vector3(), sphereCenter, radius, numRingPoints, direction) {
+  const points = [];
+  const towardsCenter = center.subtract(sphereCenter).normalize();
+  const side = towardsCenter.normalize();
+
+  for (let i = 0; i < numRingPoints; i++) {
+    const angle = (2 * Math.PI * i) / numRingPoints;
+    const quat = BABYLON.Quaternion.FromEulerAngles(0, angle, 0);
+    let mat = BABYLON.Matrix.Zero();
+    quat.toRotationMatrix(mat);
+    const rotatedSide = BABYLON.Vector3.TransformCoordinates(side, mat).cross(direction);
+
+    const ringPoint = center.add(rotatedSide.scale(radius));
+    points.push(ringPoint);
+  }
+
+  return points;
+}
+
+
+function rotateVectorYByAngle(vec, angle)  {
+  const quat = BABYLON.Quaternion.FromEulerAngles(0, angle, 0);
+  let mat = BABYLON.Matrix.Zero();
+  quat.toRotationMatrix(mat);
+  return BABYLON.Vector3.TransformCoordinates(vec, mat);
+} 
