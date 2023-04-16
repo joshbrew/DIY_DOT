@@ -1,59 +1,17 @@
 import * as BABYLON from 'babylonjs'
+import './src/pointIsInside.js'
+
 import { create2DSineWaveOnSphere,  distanceBetweenPoints,  mapPointToSphere, sphericalToCartesian } from './src/sineWaves';
+import { nLEDs, nSensors, sensorLayout } from './src/sensorLayout';
+import { blueToRedGradient } from './src/util.js';
 
+const radiusMM = 90; //mm, from average human head diameter of 18cm 
 
-BABYLON.Mesh.prototype.pointIsInside = function (point) {    
-	var boundInfo = this.getBoundingInfo();
-	var max = boundInfo.maximum;
-	var min = boundInfo.minimum;
-	//var diameter = 2 * boundInfo.boundingSphere.radius;
-
-	if(point.x < min.x+this.position.x || point.x > max.x+this.position.x) {
-		return false;
-	}
-	if(point.y < min.y+this.position.y || point.y > max.y+this.position.y) {
-		return false;
-	}
-	if(point.z < min.z+this.position.z || point.z > max.z+this.position.z) {
-		return false;
-	}
-
-    return true;
-
-	// var pointFound = false;
-	// var d = 0;
-	// var hitCount = 0;
-	// var gap = 0;
-	// var distance = 0;
-	// var ray = new BABYLON.Ray(BABYLON.Vector3.Zero(), BABYLON.Axis.X, diameter);;
-	// var pickInfo;
-	// var direction = point.clone();
-    // var refPoint = point.clone();
-
-	
-	// hitCount = 0;
-	// ray.origin = refPoint;
-    // ray.direction = direction;
-    // ray.distance = diameter;		
-	// pickInfo = ray.intersectsMesh(this);
-	// while (pickInfo.hit) {	
-	// 	hitCount++;
-	// 	pickInfo.pickedPoint.addToRef(direction.scale(0.00000001), refPoint);
-	// 	ray.origin  = refPoint;
-	// 	pickInfo = ray.intersectsMesh(this);
-	// }	
-	// if((hitCount % 2) === 1) {
-	// 	pointFound = true;
-	// }
-	// return pointFound;
-};
-
-
-const radius = 90; //mm, from average human head diameter of 18cm 
-const voxelsize = radius/15;
+const voxelsizeMM = radiusMM/25; //controls voxel division, too high = takes forever to load, will implement caching.
 
 // Map the points to the surface of a sphere
 const sphereCenter = new BABYLON.Vector3(0, 0, 0);
+
 
 // // Usage example (assuming you have a Babylon.js scene object)
 // const gridPoints = createGridPoints(gridSize, gridSpacing);
@@ -62,12 +20,13 @@ const sphereCenter = new BABYLON.Vector3(0, 0, 0);
 
 
 
-const numPoints = 100;
+const numPointsPerLine = 100;
 const frequency = 1/2;
 
- 
-let s3 = sphericalToCartesian(radius, 1.0, 1.4);
-let e3 = sphericalToCartesian(radius, 0, 1);
+ //test line
+ ///////////
+let s3 = sphericalToCartesian(radiusMM, 1.0, 1.4);
+let e3 = sphericalToCartesian(radiusMM, 0, 1);
 s3 = new BABYLON.Vector3(s3.x, s3.y, s3.z); 
 e3 = new BABYLON.Vector3(e3.x, e3.y, e3.z);
 
@@ -79,14 +38,14 @@ const sineWavePoints3 = create2DSineWaveOnSphere(
     sphereCenter, 
     amplitude3, 
     frequency, 
-    numPoints
+    numPointsPerLine
 );
-
+///////////////
 
 /** Sensors (x) and LEDS (o)
- *     x      x
+ *     x      x      
  *  
- *  o     o      o
+ *  o     o      o      9x2 sets of LEDs, IR top, Red bottom, 8x2 sets of sensors (16)
  *  o     o      o
  * 
  *     x      x
@@ -100,50 +59,6 @@ const sources = {
 } as any;
 
 
-const sensorLayout = {
-    leds:[
-        {x:0,           y:1.1,        z:0}, //led 0
-        {x:0,           y:-1.1,       z:0},
-        {x:18.5,        y:1.1,        z:0},
-        {x:18.5,        y:-1.1,       z:0},
-        {x:2*18.5,      y:1.1,        z:0},
-        {x:2*18.5,      y:-1.1,       z:0},
-        {x:3*18.5,      y:1.1,        z:0},
-        {x:3*18.5,      y:-1.1,       z:0},
-        {x:4*18.5,      y:1.1,        z:0},
-        {x:4*18.5,      y:-1.1,       z:0},
-        {x:5*18.5,     y:1.1,        z:0},
-        {x:5*18.5,     y:-1.1,       z:0},
-        {x:6*18.5,     y:1.1,        z:0},
-        {x:6*18.5,     y:-1.1,       z:0},
-        {x:7*18.5,     y:1.1,        z:0},
-        {x:7*18.5,     y:-1.1,       z:0},
-        {x:8*18.5,     y:1.1,        z:0},
-        {x:8*18.5,     y:-1.1,       z:0} //led 17
-    ],
-    sensors:[
-        {x:9.25,         y:12.1,     z:0}, //sensor 0
-        {x:9.25,         y:-12.1,    z:0},
-        {x:9.25+18.5,    y:12.1,     z:0},
-        {x:9.25+18.5,    y:-12.1,    z:0},
-        {x:9.25+2*18.5,  y:12.1,     z:0},
-        {x:9.25+2*18.5,  y:-12.1,    z:0},
-        {x:9.25+3*18.5,  y:12.1,     z:0},
-        {x:9.25+3*18.5,  y:-12.1,    z:0},
-        {x:9.25+4*18.5,  y:12.1,     z:0},
-        {x:9.25+4*18.5,  y:-12.1,    z:0},
-        {x:9.25+5*18.5, y:12.1,     z:0},
-        {x:9.25+5*18.5, y:-12.1,    z:0},
-        {x:9.25+6*18.5, y:12.1,     z:0},
-        {x:9.25+6*18.5, y:-12.1,    z:0},
-        {x:9.25+7*18.5, y:12.1,     z:0},
-        {x:9.25+7*18.5, y:-12.1,    z:0}  //sensor 15
-    ]
-};
-
-const nSensors = 16;
-const nLEDs = 18;
-
 const sensorPoints = [] as any[];
 const ledPoints = [] as any[];
 
@@ -153,16 +68,18 @@ let sourceDistances = {};
 
 let maxDistance = 0;
 
+//map the sensor layout to a sphere to simulate a human head
+
 for (const i of sensorLayout.leds) {
     let veci = new BABYLON.Vector3(i.x - 18.5*8/2, i.y, i.z+95);
-    const start = mapPointToSphere(veci, sphereCenter, radius);
+    const start = mapPointToSphere(veci, sphereCenter, radiusMM);
     ledPoints.push(veci);
     sourceDistances[x] = {};
     
     let y = 0;
     for(const j of sensorLayout.sensors) {
         let vecj = new BABYLON.Vector3(j.x - 18.5*8/2, j.y, j.z+95);
-        const end = mapPointToSphere(vecj, sphereCenter, radius);
+        const end = mapPointToSphere(vecj, sphereCenter, radiusMM);
         sensorPoints.push(vecj);
         const amp = end.subtract(start).length()/4;
         //const magLine = createDipoleFieldLine(start, end, sphereCenter, amp, numPoints);
@@ -172,7 +89,7 @@ for (const i of sensorLayout.leds) {
             sphereCenter, 
             amp, 
             frequency, 
-            numPoints
+            numPointsPerLine
         );
         
         sourceDistances[x][y] = distanceBetweenPoints(start,end);
@@ -189,6 +106,28 @@ sources.leds = {intensity:1, path: ledPoints};
 sources.sensors = {intensity:1, path: sensorPoints};
 
 
+
+let voxels = {
+    /**
+     *  [voxelId]:{
+     *      position:{}
+     *      sources:{
+     *          [sourceId]: {
+     *                 proportion: nPointsInVoxel / numPoints //this will be the proportional value given to this voxel from a reading source/sink trajectory
+     *                 intensity: number,
+     *                 isInfrared: bool
+     *           }
+     *      },
+     *      intensity:0 //this will accumulate the source reading proportions per frame to visualize a 3D heat map visualization
+     *  }
+     */
+};
+
+const sourceKeys = Object.keys(sources);
+
+
+
+//set up babylon
 const canvas = document.createElement("canvas"); // Get the canvas element
 
 let node = document.createElement('div');
@@ -197,21 +136,6 @@ document.body.appendChild(node);
 
 const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
-
-
-let voxels = {
-    /**
-     *  [voxelId]:{
-     *      position:{}
-     *      sources:{
-     *          [sourceId]: nPointsInVoxel / numPoints //this will be the proportional value given to this voxel from a reading source/sink trajectory
-     *      },
-     *      intensity:0 //this will accumulate the source reading proportions per frame to visualize a 3D heat map visualization
-     *  }
-     */
-};
-
-const sourceKeys = Object.keys(sources);
 
 const createScene = () => {
     // Creates a basic Babylon Scene object
@@ -234,7 +158,7 @@ const createScene = () => {
     light.intensity = 0.7;
     // Built-in 'sphere' shape.
     const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", 
-        {diameter: radius*2, segments: 32}, 
+        {diameter: radiusMM*2, segments: 32}, 
         scene);
 
     let mat = new BABYLON.StandardMaterial('matdebug', scene);
@@ -257,7 +181,7 @@ const createScene = () => {
         let searching = {};
         sourceKeys.forEach((source) => {
             searching[source] = [...sources[source].path];
-        })
+        });
         
         for (let x = -numVoxelsPerAxis / 2; x < numVoxelsPerAxis / 2; x++) {
             for (let y = -numVoxelsPerAxis / 2; y < numVoxelsPerAxis / 2; y++) {
@@ -301,11 +225,16 @@ const createScene = () => {
                             });
 
 
-                            if(voxels[voxelId].sources) {
-                                const proportion = foundIdcs.length / numPoints;
-                                voxels[voxelId].sources[source] = {proportion:proportion, intensity:1, isInfrared:sources[source].isInfrared}; //proportion of this reading
+                            if(voxels[voxelId].sources && foundIdcs.length > 0) {
+                                const proportion = foundIdcs.length / numPointsPerLine;
+                                //reverse bias the proportion toward the center of the wave (about 90% should come from the primary depth achieved by each source/sink pair (??))
+                                const percentTowardMidpoint = 1-Math.abs(1+Math.max(...foundIdcs) - numPointsPerLine/2)/(numPointsPerLine/2);
+                                console.log(foundIdcs);
+                                const biasedProportion = (1-proportion) * percentTowardMidpoint
+
+                                voxels[voxelId].sources[source] = {proportion:biasedProportion, intensity:1, isInfrared:sources[source].isInfrared}; //proportion of this reading
                                 voxels[voxelId].intensity = sources[source].intensity * (voxels[voxelId].intensity ? 
-                                voxels[voxelId].intensity + proportion/sourceKeys.length : proportion/sourceKeys.length);
+                                voxels[voxelId].intensity + biasedProportion/sourceKeys.length : biasedProportion/sourceKeys.length);
                             }
                         });
 
@@ -314,7 +243,7 @@ const createScene = () => {
                             voxel.position = position;
                             voxels[voxelId].mesh = voxel;
 
-                            let rgb = blueToRedGradient(voxels[voxelId].intensity * numPoints); 
+                            let rgb = blueToRedGradient(voxels[voxelId].intensity * numPointsPerLine); 
                             let vmat = new BABYLON.StandardMaterial('matdebug', scene);
                             vmat.diffuseColor = new BABYLON.Color3(rgb.r, rgb.g, rgb.b);
                             vmat.alpha = 0.3;
@@ -335,7 +264,7 @@ const createScene = () => {
     // Create a voxelized sphere
     const center = new BABYLON.Vector3(0, 0, 0);
 
-    voxelizeSphere(center, radius, voxelsize); // - voxelSize*0.5
+    voxelizeSphere(center, radiusMM, voxelsizeMM); // - voxelSize*0.5
   
     // Built-in 'ground' shape.
     // const ground = BABYLON.MeshBuilder.CreateGround("ground", 
@@ -444,12 +373,10 @@ function mapReadingsToVoxels(readings:{[key:string]:{[key:string]:number|number[
         return Math.sqrt(sum/arr.length);
     }
 
-    let normalize = (arr) => {
-
-        let mag = magnitude(arr);
-        return arr.map(v => v/mag);
-
-    }
+    // let normalize = (arr) => {
+    //     let mag = magnitude(arr);
+    //     return arr.map(v => v/mag);
+    // }
 
     
     let mag = magnitude(infrared);
@@ -479,46 +406,5 @@ function simulateReadings() {
 
 
 
-function hslToRgb(h, s, l) {
-    function hueToRgb(p, q, t) {
-      if (t < 0) t += 1;
-      if (t > 1) t -= 1;
-      if (t < 1 / 6) return p + (q - p) * 6 * t;
-      if (t < 1 / 2) return q;
-      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-      return p;
-    }
-  
-    if (s === 0) {
-      return [l, l, l]; // achromatic
-    }
-  
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    const r = hueToRgb(p, q, h + 1 / 3);
-    const g = hueToRgb(p, q, h);
-    const b = hueToRgb(p, q, h - 1 / 3);
-  
-    return [r, g, b];
-  }
-  
-  function blueToRedGradient(value) {
-    if(value > 1) value = 1;
-    else if (value < 0) value = 0;
-    const h = (1  - value) * (240 / 360); // hue value for blue-to-red gradient
-    const s = 1;
-    const l = 0.5;
-    const [r, g, b] = hslToRgb(h, s, l);
-  
-    return {
-      r,
-      g,
-      b,
-    };
-  }
 
-
-export function pointIsInside(v: any) {
-    throw new Error('Function not implemented.');
-}
 
