@@ -103,7 +103,15 @@ for (const i of sensorLayout.leds) {
         sourceDistances[x][y] = distanceBetweenPoints(start,end);
         if(maxDistance < sourceDistances[x][y]) maxDistance = sourceDistances[x][y];
 
-        sources[`${x},${y}`] = {intensity:1, path: sineWave, isInfrared: x%2===0, source:start, sink:end, distance: sourceDistances[x][y]}; //even indices are infrared
+        sources[`${x},${y}`] = {
+            intensity:1, 
+            path: sineWave, 
+            isInfrared: x%2===0, 
+            source:start, 
+            sink:end, 
+            distance: 
+            sourceDistances[x][y]
+        }; //even indices are infrared
     
         y++;
     }
@@ -194,7 +202,7 @@ const createScene = () => {
         let nnVPA = -numVoxelsPerAxis / 2;
         let nVPA = numVoxelsPerAxis / 2;
 
-        let totalPointsPerLine = numPointsPerLine+Math.floor(numPointsPerLine)*numRingPoints;
+        let totalPointsPerLine = sources[Object.keys(sources)[0]].path.length;
 
         for (let x = nnVPA; x < nVPA; x++) {
             for (let y = nnVPA; y < nVPA; y++) {

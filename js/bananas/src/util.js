@@ -1,3 +1,5 @@
+
+//gpt4 did this, I think I have a better solution somewhere but was too lazy to get it
 export function hslToRgb(h, s, l) {
     function hueToRgb(p, q, t) {
       if (t < 0) t += 1;

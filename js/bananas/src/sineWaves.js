@@ -1,3 +1,4 @@
+//GPT4 did most of this math
 
 export function sphericalToCartesian(r, theta, phi) {
     return {
