@@ -147,7 +147,6 @@ export function create2DSineWaveOnSphereWithRadialRing(
   start, end, sphereCenter, amplitude, frequency, numPoints, numRingPoints, angleOffset
 ) {
   const points = [];
-  const radialPoints = [];
   const result = [];
   const dir = end.subtract(start);
   const length = dir.length();
@@ -172,7 +171,6 @@ export function create2DSineWaveOnSphereWithRadialRing(
     // Create radial ring around each point
     if(i%3 === 0) {
       const radialRing = createRadialRing(point, sphereCenter, displacement*angleOffset, numRingPoints, direction);
-      radialPoints.push(...radialRing);
       result.push(...radialRing);
     }
     points.push(point);
