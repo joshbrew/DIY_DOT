@@ -148,6 +148,7 @@ export function create2DSineWaveOnSphereWithRadialRing(
 ) {
   const points = [];
   const radialPoints = [];
+  const result = [];
   const dir = end.subtract(start);
   const length = dir.length();
   const normalizedDir = dir.normalize();
@@ -172,12 +173,13 @@ export function create2DSineWaveOnSphereWithRadialRing(
     if(i%3 === 0) {
       const radialRing = createRadialRing(point, sphereCenter, displacement*angleOffset, numRingPoints, direction);
       radialPoints.push(...radialRing);
+      result.push(...radialRing);
     }
     points.push(point);
+    result.push(point);
+    
   }
-
-  points.push(...radialPoints);
-  return points;
+  return result;
 }
 
 function createRadialRing(center = new BABYLON.Vector3(), sphereCenter, radius, numRingPoints, direction) {
