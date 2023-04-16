@@ -7,7 +7,7 @@ import { blueToRedGradient } from './src/util.js';
 
 const radiusMM = 90; //mm, from average human head diameter of 18cm 
 
-const voxelsizeMM = radiusMM/25; //controls voxel division, too high = takes forever to load, will implement caching.
+const voxelsizeMM = radiusMM/15; //controls voxel division, too high = takes forever to load, will implement caching.
 
 // Map the points to the surface of a sphere
 const sphereCenter = new BABYLON.Vector3(0, 0, 0);
@@ -229,8 +229,14 @@ const createScene = () => {
                                 const proportion = foundIdcs.length / numPointsPerLine;
                                 //reverse bias the proportion toward the center of the wave (about 90% should come from the primary depth achieved by each source/sink pair (??))
                                 const percentTowardMidpoint = 1-Math.abs(1+Math.max(...foundIdcs) - numPointsPerLine/2)/(numPointsPerLine/2);
-                                console.log(foundIdcs);
-                                const biasedProportion = (1-proportion) * percentTowardMidpoint
+
+                                function springFactor(x) {
+                                    // Use a power function to modify the line
+                                    const power = Math.log(0.9) / Math.log(0.8);
+                                    return Math.pow(x, power);
+                                }
+
+                                const biasedProportion = (1-proportion) * springFactor(percentTowardMidpoint);
 
                                 voxels[voxelId].sources[source] = {proportion:biasedProportion, intensity:1, isInfrared:sources[source].isInfrared}; //proportion of this reading
                                 voxels[voxelId].intensity = sources[source].intensity * (voxels[voxelId].intensity ? 
