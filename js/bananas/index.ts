@@ -59,7 +59,7 @@ const sineWavePoints3 = create2DSineWaveOnSphereWithRadialRing(
 
 //intensity is the normalized intensity of that source->sink measurement based on all of our sensor readings' average/baseline strength
 const sources = {
-    0:{intensity:1, path:sineWavePoints3},
+    //0:{intensity:1, path:sineWavePoints3},
     // 1:{intensity:1, path:spherePoints},
     // 2:{intensity:1, path:gridPoints}
 } as any;
@@ -219,7 +219,11 @@ const createScene = () => {
                             position:position,
                             red:1,
                             ir:1,
-                            intensity:0
+                            intensity:0,
+                            x:x,
+                            y:y,
+                            z:z,
+                            halfSize:halfSize
                         } as any;
 
                         sourceKeys.forEach((source) => {
@@ -273,7 +277,7 @@ const createScene = () => {
                             let rgb = blueToRedGradient(voxels[voxelId].intensity * totalPointsPerLine); 
                             let vmat = new BABYLON.StandardMaterial('matdebug', scene);
                             vmat.diffuseColor = new BABYLON.Color3(rgb.r, rgb.g, rgb.b);
-                            vmat.alpha = 0.3;
+                            vmat.alpha = 0.2;
                             voxels[voxelId].mesh.material = vmat;
                         } else {
                             delete voxels[voxelId];
@@ -284,6 +288,8 @@ const createScene = () => {
             }
         }
     
+
+
         //sphere.isVisible = true;
         return voxels;
     }
@@ -292,13 +298,19 @@ const createScene = () => {
     const center = new BABYLON.Vector3(0, 0, 0);
 
     voxelizeSphere(center, radiusMM, voxelsizeMM); // - voxelSize*0.5
-  
+
+    
+
+
     // Built-in 'ground' shape.
     // const ground = BABYLON.MeshBuilder.CreateGround("ground", 
     //     {width: 6, height: 6}, 
     //     scene);
 
-    sourceKeys.forEach((source) => {
+
+    const renderPoints = false;
+    
+    if(renderPoints) sourceKeys.forEach((source) => {
 
         let points = sources[source].path;
 
@@ -317,6 +329,13 @@ const createScene = () => {
     return scene;
 };
 
+
+
+
+
+
+let flatProjection = true as any;
+
 setTimeout(() => {
 
     const scene = createScene();
@@ -332,8 +351,11 @@ setTimeout(() => {
         let readings = simulateReadings();
         mapReadingsToVoxels(readings);
 
+        if(flatProjection) {
+            flatProjection = voxelPlane2D(voxels, 'up', scene, typeof flatProjection === 'object' ? flatProjection : undefined, undefined);
+        }
         console.log('updated readings')
-        setTimeout(simLoop, 100);
+        setTimeout(simLoop, 200);
     }
 
     simLoop();
@@ -351,7 +373,15 @@ setTimeout(() => {
 let newReadings = false;
 
 
-function mapReadingsToVoxels(readings:{[key:string]:{[key:string]:number|number[]}}={
+
+
+
+
+
+
+
+function mapReadingsToVoxels(
+    readings:{[key:string]:{[key:string]:number|number[]}}={
     //readings will come in as ADS131 readings + which LED was on, then we'll sort into sensor readings per LED
     0:{
         0:[5678,9012],
@@ -413,6 +443,7 @@ function mapReadingsToVoxels(readings:{[key:string]:{[key:string]:number|number[
         let rgb = blueToRedGradient(voxel.infrared/mag);
         voxel.mesh.material.diffuseColor = new BABYLON.Color3(rgb.r, rgb.g, rgb.b);
     }
+
 }
 
 function simulateReadings() {
@@ -435,3 +466,120 @@ function simulateReadings() {
 
 
 
+
+
+
+//by gpt4
+function voxelPlane2D(
+    voxels:any,
+    face:'up'|'front'='up', 
+    scene:BABYLON.Scene,
+    meshInfo?:{mesh?:any, texture?:any},
+    slice?:{x?:number,y?:number,z?:number}
+) {
+    // Create a 2D array to store the 2D representation of the voxels
+    const plane = {} as any;
+
+    let minX = Infinity;
+    let minY = Infinity;
+    let minZ = Infinity;
+    let maxX = 0;
+    let maxY = 0;
+    let maxZ = 0;
+    let halfSize;
+
+    // Iterate through the unordered set of voxels and project their positions onto the selected face
+    for (const voxelId in voxels) {
+        const voxel = voxels[voxelId];
+        const position = voxel.position;
+
+        if(!halfSize) halfSize = voxel.halfSize;
+        const y = face === 'up' ? position.z : position.y;
+        
+        if(slice) {
+            if('x' in slice && position.x !== slice.x) continue;
+            if('y' in slice && position.y !== slice.y) continue;
+            if('z' in slice && position.z !== slice.z) continue;
+        }
+
+        if(position.x < minX) minX = position.x;
+        if(position.y < minY) minY = position.y;
+        if(position.z < minZ) minZ = position.z;
+        if(position.x > maxX) maxX = position.x;
+        if(position.x > maxY) maxY = position.y;
+        if(position.z > maxZ) maxZ = position.z;
+        // Get the color from the mesh's material
+        const color = voxel.mesh.material.diffuseColor;
+
+        if(!plane[position.x]) plane[position.x] = {} as any;
+
+        // Add the color to the corresponding cell in the 2D array
+        if (plane[position.x][y]) {
+            plane[position.x][y].push(color);
+        } else {
+            plane[position.x][y] = [color];
+        }
+    }
+
+    // Calculate the average color for each cell in the 2D array
+    const averageColor = (colors) => {
+        const sum = colors.reduce((acc, color) => acc.add(color), BABYLON.Color3.Black());
+        return sum.scale(1 / colors.length);
+    };
+
+    let keys = Object.keys(plane);
+
+    const averagedPlane = keys.map(row => {
+        let cells = Object.keys(plane[row]);
+        return cells.map(cell => averageColor(plane[row][cell]))
+    });
+    //console.log(plane, averagedPlane);
+    // Create a 2D texture from the averaged colors
+   // Create a plane mesh and apply the 2D texture to it
+
+    let width = face === 'up' ? maxX - minX : maxZ - minZ;
+    let height = face === 'up' ? maxZ - minZ : maxY-minY;
+
+    if(!meshInfo?.texture) {
+        meshInfo = createVoxelPlaneMesh(width, height, halfSize, scene);
+        if(face === 'up') meshInfo.mesh.rotation.x = Math.PI/2;
+        meshInfo.mesh.rotation.y = Math.PI;
+    }
+
+    //console.log(averagedPlane);
+
+    const ctx = meshInfo.texture.getContext();
+    for (let x = 0; x < keys.length; x++) {
+        let nY = averagedPlane[x].length;
+        let yKeys = Object.keys(plane[keys[x]]);
+        for (let y = 0; y < nY; y++) {
+            const color = averagedPlane[x][y];
+            ctx.fillStyle = `rgb(${color.r * 255},${color.g * 255},${color.b * 255})`;
+            //console.log((parseInt(keys[x])), parseInt(keys[y]))
+
+            ctx.fillRect(
+                (parseInt(keys[x]) - minX), 
+                (parseInt(yKeys[y]) - (face === 'up' ? minZ : minY)), 
+                2*halfSize, 
+                2*halfSize
+            );
+        }
+    }
+    meshInfo.texture.update();
+
+    return meshInfo;
+
+}
+
+function createVoxelPlaneMesh(width, height, halfSize, scene) {
+
+    const texture = new BABYLON.DynamicTexture("dynamicTexture", {width:width+2*halfSize, height:height+2*halfSize}, scene, true);
+
+    const planeMesh = BABYLON.MeshBuilder.CreatePlane("plane", {width:width+2*halfSize, height:height+2*halfSize}, scene);
+    const planeMaterial = new BABYLON.StandardMaterial("planeMaterial", scene);
+ 
+    planeMaterial.diffuseTexture = texture;
+    planeMesh.material = planeMaterial;
+
+    return {mesh:planeMesh, texture:texture};
+}
