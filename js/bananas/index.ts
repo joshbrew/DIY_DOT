@@ -7,7 +7,7 @@ import { blueToRedGradient } from './src/util.js';
 
 const radiusMM = 90; //mm, from average human head diameter of 18cm 
 
-const voxelsizeMM = radiusMM/15; //controls voxel division, too high = takes forever to load, will implement caching.
+const voxelsizeMM = radiusMM/25; //controls voxel division, too high = takes forever to load, will implement caching.
 
 // Map the points to the surface of a sphere
 const sphereCenter = new BABYLON.Vector3(0, 0, 0);
@@ -334,7 +334,8 @@ const createScene = () => {
 
 
 
-let flatProjection = true as any;
+let frontProjection = true as any;
+let topProjection = true as any;
 
 setTimeout(() => {
 
@@ -351,8 +352,11 @@ setTimeout(() => {
         let readings = simulateReadings();
         mapReadingsToVoxels(readings);
 
-        if(flatProjection) {
-            flatProjection = voxelPlane2D(voxels, 'up', scene, typeof flatProjection === 'object' ? flatProjection : undefined, undefined);
+        if(frontProjection) {
+            frontProjection = voxelPlane2D(voxels, 'front', scene, typeof frontProjection === 'object' ? frontProjection : undefined, undefined);
+        }
+        if(topProjection) {
+            topProjection = voxelPlane2D(voxels, 'up', scene, typeof topProjection === 'object' ? topProjection : undefined, undefined);
         }
         console.log('updated readings')
         setTimeout(simLoop, 200);
@@ -472,7 +476,7 @@ function simulateReadings() {
 //by gpt4
 function voxelPlane2D(
     voxels:any,
-    face:'up'|'front'='up', 
+    face:'up'|'front'='front', 
     scene:BABYLON.Scene,
     meshInfo?:{mesh?:any, texture?:any},
     slice?:{x?:number,y?:number,z?:number}
@@ -506,8 +510,9 @@ function voxelPlane2D(
         if(position.y < minY) minY = position.y;
         if(position.z < minZ) minZ = position.z;
         if(position.x > maxX) maxX = position.x;
-        if(position.x > maxY) maxY = position.y;
+        if(position.y > maxY) maxY = position.y;
         if(position.z > maxZ) maxZ = position.z;
+
         // Get the color from the mesh's material
         const color = voxel.mesh.material.diffuseColor;
 
@@ -537,13 +542,15 @@ function voxelPlane2D(
     // Create a 2D texture from the averaged colors
    // Create a plane mesh and apply the 2D texture to it
 
-    let width = face === 'up' ? maxX - minX : maxZ - minZ;
-    let height = face === 'up' ? maxZ - minZ : maxY-minY;
+    let width = maxX - minX;
+    let height = face === 'up' ? maxZ - minZ : maxY - minY;
 
     if(!meshInfo?.texture) {
         meshInfo = createVoxelPlaneMesh(width, height, halfSize, scene);
-        if(face === 'up') meshInfo.mesh.rotation.x = Math.PI/2;
-        meshInfo.mesh.rotation.y = Math.PI;
+        if(face === 'up') {
+            meshInfo.mesh.rotation.x = Math.PI/2;
+            meshInfo.mesh.rotation.y = Math.PI;
+        }
     }
 
     //console.log(averagedPlane);
