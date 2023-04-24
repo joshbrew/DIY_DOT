@@ -536,7 +536,8 @@ function voxelPlane2D(
     face:'up'|'front'='front', 
     scene:BABYLON.Scene,
     meshInfo?:{mesh?:any, texture?:any},
-    slice?:{x?:number,y?:number,z?:number}
+    slice?:{x?:number,y?:number,z?:number},
+    resScale=8
 ) {
     // Create a 2D array to store the 2D representation of the voxels
     const plane = {} as any;
@@ -601,9 +602,10 @@ function voxelPlane2D(
 
     let width = maxX - minX;
     let height = face === 'up' ? maxZ - minZ : maxY - minY;
+    let edgeLength = Math.abs(parseInt(keys[1]) - parseInt(keys[0]));
 
     if(!meshInfo?.texture) {
-        meshInfo = createVoxelPlaneMesh(width, height, halfSize, scene);
+        meshInfo = createVoxelPlaneMesh(width, height, halfSize, scene, resScale);
         if(face === 'up') {
             meshInfo.mesh.rotation.x = Math.PI/2;
             meshInfo.mesh.rotation.y = Math.PI;
@@ -613,6 +615,8 @@ function voxelPlane2D(
     //console.log(averagedPlane);
 
     const ctx = meshInfo.texture.getContext();
+    
+
     for (let x = 0; x < keys.length; x++) {
         let nY = averagedPlane[x].length;
         let yKeys = Object.keys(plane[keys[x]]);
@@ -621,11 +625,19 @@ function voxelPlane2D(
             ctx.fillStyle = `rgb(${color.r * 255},${color.g * 255},${color.b * 255})`;
             //console.log((parseInt(keys[x])), parseInt(keys[y]))
 
+            let xp = parseInt(keys[x]);
+            let yp = parseInt(yKeys[y]);
+
+            if(xp < 0) xp = xp - minX - halfSize*0.5;
+            else xp = xp - minX + halfSize * 0.5;
+            if(yp < 0) yp = yp - (face === 'up' ? minZ : minY) - halfSize * 0.5;
+            else yp = yp - (face === 'up' ? minZ : minY) + halfSize * 0.5;
+
             ctx.fillRect(
-                (parseInt(keys[x]) - minX), 
-                (parseInt(yKeys[y]) - (face === 'up' ? minZ : minY)), 
-                2*halfSize, 
-                2*halfSize
+                resScale*xp, 
+                resScale*yp, 
+                resScale*2*halfSize, 
+                resScale*2*halfSize
             );
         }
     }
@@ -635,9 +647,9 @@ function voxelPlane2D(
 
 }
 
-function createVoxelPlaneMesh(width, height, halfSize, scene) {
+function createVoxelPlaneMesh(width, height, halfSize, scene, resScale=4) {
 
-    const texture = new BABYLON.DynamicTexture("dynamicTexture", {width:width+2*halfSize, height:height+2*halfSize}, scene, true);
+    const texture = new BABYLON.DynamicTexture("dynamicTexture", {width:(width+2*halfSize)*resScale, height:(height+2*halfSize)*resScale}, scene, true);
 
     const planeMesh = BABYLON.MeshBuilder.CreatePlane("plane", {width:width+2*halfSize, height:height+2*halfSize}, scene);
     const planeMaterial = new BABYLON.StandardMaterial("planeMaterial", scene);
