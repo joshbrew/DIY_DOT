@@ -22,7 +22,8 @@
   "author": "",
   "license": "AGPL-3.0-or-later",
   "dependencies": {
-    "babylonjs": "^5.56.0"
+    "babylonjs": "^5.56.0",
+    "graphscript": "^0.2.116"
   },
   "nodemonConfig": {
     "env": {

@@ -74,6 +74,16 @@ let sourceDistances = {};
 
 let maxDistance = 0;
 
+//we'll constrain the voxel sphere boundaries to vastly speed up the generation step
+let voxelBounds = {
+    minX:Infinity,
+    minY:Infinity,
+    minZ:Infinity,
+    maxX:-Infinity,
+    maxY:-Infinity,
+    maxZ:-Infinity
+}
+
 //map the sensor layout to a sphere to simulate a human head
 
 for (const i of sensorLayout.leds) {
@@ -103,6 +113,28 @@ for (const i of sensorLayout.leds) {
         sourceDistances[x][y] = distanceBetweenPoints(start,end);
         if(maxDistance < sourceDistances[x][y]) maxDistance = sourceDistances[x][y];
 
+        //bounding box
+        sineWave.forEach((point) => {
+            if(point.x < voxelBounds.minX) {
+                voxelBounds.minX = point.x;
+            } 
+            if(point.x > voxelBounds.maxX) {
+                voxelBounds.maxX = point.x;
+            }
+            if(point.y < voxelBounds.minY) {
+                voxelBounds.minY = point.y;
+            } 
+            if(point.y > voxelBounds.maxY) {
+                voxelBounds.maxY = point.y;
+            }
+            if(point.z < voxelBounds.minZ) {
+                voxelBounds.minZ = point.z;
+            } 
+            if(point.z > voxelBounds.maxZ) {
+                voxelBounds.maxZ = point.z;
+            }
+        });
+
         sources[`${x},${y}`] = {
             intensity:1, 
             path: sineWave, 
@@ -117,6 +149,14 @@ for (const i of sensorLayout.leds) {
     }
     x++;
 }
+
+//correct for the size of the voxels to extend boundaries correctly
+voxelBounds.minX -= voxelsizeMM*0.5;
+voxelBounds.maxX += voxelsizeMM*0.5;
+voxelBounds.minY -= voxelsizeMM*0.5;
+voxelBounds.maxY += voxelsizeMM*0.5;
+voxelBounds.minZ -= voxelsizeMM*0.5;
+voxelBounds.maxZ += voxelsizeMM*0.5;
 
 sources.leds = {intensity:1, path: ledPoints};
 sources.sensors = {intensity:1, path: sensorPoints};
@@ -204,11 +244,28 @@ const createScene = () => {
 
         let totalPointsPerLine = sources[Object.keys(sources)[0]].path.length;
 
-        for (let x = nnVPA; x < nVPA; x++) {
-            for (let y = nnVPA; y < nVPA; y++) {
-                for (let z = nnVPA; z < nVPA; z++) {
+        let minSize = nnVPA * voxelSize;
+        let maxSize = nVPA * voxelSize;
+        let incr = voxelSize;
+
+        for (let x = minSize; x < maxSize; x+=incr) {
+            for (let y = minSize; y < maxSize; y+=incr) {
+                for (let z = minSize; z < maxSize; z+=incr) {
+
+                    let xp = x+halfSize;
+                    if(xp < voxelBounds.minX) continue;
+                    else if(xp > voxelBounds.maxX) continue;
+                    let yp = y+halfSize;
+                    if(yp < voxelBounds.minY) continue;
+                    else if(yp > voxelBounds.maxY) continue;
+                    let zp = z+halfSize;
+                    if(zp < voxelBounds.minZ) continue;
+                    else if(zp > voxelBounds.maxZ) continue;
                     
-                    const position = new BABYLON.Vector3(x * voxelSize + halfSize, y * voxelSize + halfSize, z * voxelSize + halfSize);
+                    const position = new BABYLON.Vector3(xp, yp, zp);
+
+                    //if(voxelBounds, )
+
                     const distance = BABYLON.Vector3.Distance(position, center);
             
                     if (distance <= radius) {
@@ -308,7 +365,7 @@ const createScene = () => {
     //     scene);
 
 
-    const renderPoints = false;
+    const renderPoints = true;
     
     if(renderPoints) sourceKeys.forEach((source) => {
 
