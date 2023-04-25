@@ -5,6 +5,8 @@ import { create2DSineWaveOnSphere,  create2DSineWaveOnSphereWithRadialRing,  dis
 import { nLEDs, nSensors, sensorLayout } from './src/sensorLayout';
 import { blueToRedGradient } from './src/util.js';
 
+const renderPoints = false;
+
 const radiusMM = 90; //mm, from average human head diameter of 18cm 
 
 const voxelsizeMM = radiusMM/25; //controls voxel division, too high = takes forever to load, will implement caching.
@@ -365,7 +367,6 @@ const createScene = () => {
     //     scene);
 
 
-    const renderPoints = true;
     
     if(renderPoints) sourceKeys.forEach((source) => {
 
@@ -501,8 +502,13 @@ function mapReadingsToVoxels(
 
     for(const key in voxels) {
         const voxel = voxels[key];
-        let rgb = blueToRedGradient(voxel.infrared/mag);
+        let value = voxel.infrared/mag;
+        if(value > 1) value = 1;
+        else if(value < 0) value = 0;
+        let rgb = blueToRedGradient(value);
         voxel.mesh.material.diffuseColor = new BABYLON.Color3(rgb.r, rgb.g, rgb.b);
+        if(value === 0) { voxel.mesh.material.alpha = 0; }
+        else { voxel.mesh.material.alpha = value > 0.2 ? 0.2 : value; }
     }
 
 }
@@ -530,7 +536,7 @@ function simulateReadings() {
 
 
 
-//by gpt4
+//by gpt4, mostly
 function voxelPlane2D(
     voxels:any,
     face:'up'|'front'='front', 
@@ -633,6 +639,7 @@ function voxelPlane2D(
             if(yp < 0) yp = yp - (face === 'up' ? minZ : minY) - halfSize * 0.5;
             else yp = yp - (face === 'up' ? minZ : minY) + halfSize * 0.5;
 
+            //FIX
             ctx.fillRect(
                 resScale*xp, 
                 resScale*yp, 
