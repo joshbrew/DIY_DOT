@@ -236,7 +236,7 @@
                         "file_function": "Profile",
                         "plating": "non-plated"
                     },
-                    "filename_format": "%PREFIX/%FF.gbr",
+                    "filename_format": "%PREFIX/Stiffener_BOT.gbr",
                     "layers": [
                         100
                     ],
@@ -258,7 +258,7 @@
                         "file_function": "Profile",
                         "plating": "plated"
                     },
-                    "filename_format": "%PREFIX/%FF.gbr",
+                    "filename_format": "%PREFIX/Stiffener_Top.gbr",
                     "layers": [
                         101
                     ],
@@ -319,7 +319,7 @@
             ]
         }
     ],
-    "timestamp": "2023-03-28T08:49:12",
+    "timestamp": "2023-05-02T23:29:01",
     "type": "EAGLE CAM job",
     "units": "metric",
     "version": "9.2.0"

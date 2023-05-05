@@ -152,7 +152,9 @@ export function create2DSineWaveOnSphereWithRadialRing(
   const dir = end.subtract(start);
   const length = dir.length();
   const normalizedDir = dir.normalize();
+
   for (let i = 0; i < numPoints; i++) {
+
     const t = i / (numPoints - 1);
     const alongPath = start.add(normalizedDir.scale(length * t));
     const towardsCenter = alongPath.subtract(sphereCenter).normalize();
