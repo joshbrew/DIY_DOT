@@ -12,6 +12,13 @@ let csvworker = workers.addWorker({url:gsworker});
 let sbutton = document.createElement('button');
 
 let selectedChannel = 0;
+let ledGPIO = [25,22,255] //255 is ambient
+
+let head = ['timestamp'] as any[];
+
+ledGPIO.forEach((l) => {
+    head.push(l+'_'+selectedChannel);
+})
 
 sbutton.onclick = () => {
     let created = false;
@@ -23,7 +30,7 @@ sbutton.onclick = () => {
             }) => {
                 //console.log(data);
                 if(data.leds) {
-                    let result = {};
+                    let result = {timestamp:data.timestamp};
                     data.leds.forEach((v,j) => {
                         for(let i = 0; i < 8; i++) {
                             if(i !== selectedChannel) continue;
@@ -34,7 +41,7 @@ sbutton.onclick = () => {
 
                     if(!created) {
                         let title = 'data/'+new Date().toISOString()+'_FNIRS.csv'; 
-                        csvworker.run('createCSV', [title, Object.keys(result), 5, 250 ]).then(async () => {
+                        csvworker.run('createCSV', [title, head, 5, 250 ]).then(async () => {
                             list();
                         });
                         created = true;
@@ -88,11 +95,11 @@ async function list() {
     filelist.forEach((file) => {
 
         let download = async () => {
-            csvRoutes.writeToCSVFromDB(file, 10); //download files in chunks (in MB). !0MB limit recommended, it will number each chunk for huge files
+            csvRoutes.writeToCSVFromDB('data/'+file, 10); //download files in chunks (in MB). !0MB limit recommended, it will number each chunk for huge files
         }
 
         let deleteFile = () => {
-            BFSRoutes.deleteFile(file).then(() => {
+            BFSRoutes.deleteFile('data/'+file).then(() => {
                 list();
             });
         }
@@ -107,6 +114,7 @@ async function list() {
         `);
 
         let elm = document.getElementById(file);
+        console.log(elm);
 
         (elm?.querySelector('#dl') as any).onclick = download;
         (elm?.querySelector('#del') as any).onclick = deleteFile;
