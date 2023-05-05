@@ -32,10 +32,12 @@ sbutton.onclick = () => {
                 if(data.leds) {
                     let result = {timestamp:data.timestamp};
                     data.leds.forEach((v,j) => {
-                        for(let i = 0; i < 8; i++) {
-                            if(i !== selectedChannel) continue;
-                            if(!result[v+'_'+i]) result[v+'_'+i] = [] as any[];
-                            result[v+'_'+i].push(data[i][j]);
+                        if(j !== 0) {
+                            for(let i = 0; i < 8; i++) {
+                                if(i !== selectedChannel) continue;
+                                if(!result[v+'_'+i]) result[v+'_'+i] = [] as any[];
+                                result[v+'_'+i].push(data[i][j]);
+                            }
                         }
                     });
 
