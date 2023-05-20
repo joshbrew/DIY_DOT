@@ -2,6 +2,7 @@
 
 Simulating paths and overlaps for LED and photodiode arrays, and simulating volumetric data. WIP web driver project for the 16 channel headset.
 
+![Capture](https://github.com/joshbrew/DIY_DOT/assets/18196383/ba0c25dc-667e-4840-8525-402499500da7)
 
 NodeJS web app.
 
