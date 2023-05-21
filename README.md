@@ -36,7 +36,7 @@ The simulation math needs help but we'll figure it out eventually.
 
 
 ### What you need to make it work:
-* High channel-ct ADC, 24 bits recommended. See the [FreeEEG32](https://github.com/neuroidss/FreeEEG32-beta) for my board of choice. New original board design incoming in another repo :-)
+* We are working on boards here with LED compatibility, need to add support for the TLC5955DCA. See [nRF5x Biosensing Boards](https://github.com/brainsatplay/nrf5x-biosensing-boards) Includes 16 channel support, you can add more which we'll try eventually.
 * 48 GPIO or some kind of relay to drive the LEDs which need to be flashed independently. Can be done by stringing multiple cheap boards together via RX/TX pins (will publish examples eventually). 
 * We recommend narrow-coned LEDs to minimize scalp interference for short separation channels.
 * Add light pipes over PD and LED areas to get better contact.
