@@ -22,10 +22,10 @@
   "author": "",
   "license": "AGPL-3.0-or-later",
   "dependencies": {
-    "device-decoder": "^0.4.25",
-    "graphscript-services": "^0.2.127",
-    "graphscript-services.storage": "^0.2.119",
-    "webgl-plot-utils": "^0.3.20"
+    "device-decoder": "^0.6.2",
+    "graphscript-services": "^0.2.164",
+    "graphscript-services.storage": "^0.2.139",
+    "webgl-plot-utils": "^0.4.1"
   },
   "nodemonConfig": {
     "env": {
