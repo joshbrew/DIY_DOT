@@ -22,22 +22,22 @@ recordbutton.onclick = () => {
 }
 
 let useSingleChannel = true;
-let selectedChannel = 0;
+let selectedChannel = 6;
 
 let ledGPIO = [ 
     //37, 38, 255
 
-    255, //ambient
+    255, 9, 30 //ambient
     //10, 30, 9 //12, 13, 11 //2 channel hookup
 
     //16 channel hookup
     // 10, 109,
-    14, 107,
+    //14, 107,
     // 114, 17,
     // 100,  6,
     // 115, 21,
-    16,  24,
-    5,   31,
+    //16,  24,
+    //5,   31,
     // 8,    7,
     // 111, 104
 ] //255 is ambient
@@ -49,8 +49,8 @@ let lastResult = {} as any;
 
 let assignments = {
     ambient:{255:true},
-    red:{14:true, 16:true, 5:true},
-    infrared:{107:true, 24:true, 31:true}
+    red:{30:true},//{14:true, 16:true, 5:true},
+    infrared:{9:true}//{107:true, 24:true, 31:true}
 };
 
 let values = {

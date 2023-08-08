@@ -31,7 +31,7 @@ export class FNIRSDemo extends Component<{[key:string]:any}> {
 
     
     useSingleChannel = true;
-    selectedChannel = 0;
+    selectedChannel = 7;
 
 
     ambientCorrection = true;
